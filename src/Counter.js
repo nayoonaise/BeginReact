@@ -1,23 +1,29 @@
-import React, {useState} from "react";
+import React, { useReducer } from "react";
+
+function reducer(state, action) {
+    switch (action.type) {
+        case "INCREMENT" :
+            return state+1
+        case "DECREMENT":
+            return state-1;
+        default: throw new Error('Unhandled action');
+    }
+}
 
 function Counter() {
-    let localNum = 0;
-    const [number, setNumber] = useState(0);
+
+    const [number, dispatch] = useReducer(reducer, 0);
 
     const onIncrease = function(){
-        localNum+=1;
-        setNumber(number+1)
-        if(number > 3) { console.log(localNum)}
+        dispatch({type:'INCREMENT'});
     }
     const onDecrease = () => {
-        localNum--;
-        setNumber(prev => prev-1);
+        dispatch({type:'DECREMENT'});
     }
 
     return (
         <div>
             <h1>number: {number}</h1>
-            <h1> localNum: {localNum}</h1>
             <button onClick={onIncrease}>+1</button>
             <button onClick={onDecrease}>-1</button>
         </div>
