@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from "./App";
+import Hello from "./Hello";
 
 
 ReactDOM.render(
-  <App />,
+  <Hello name='react'/>,
   document.getElementById('root')
 );
 
