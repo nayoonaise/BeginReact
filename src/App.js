@@ -1,12 +1,9 @@
 import React, {useCallback, useMemo, useReducer, useRef} from 'react';
 import UserList from "./UserList";
 import CreateUser from "./CreateUser";
+import UseInputs from "./UseInputs";
 
 const initialState = {
-    inputs: {
-        username: '',
-        email: '',
-    },
     users: [
         {id: 1, username: 'A', email: '1', active: true},
         {id: 2, username: 'B', email: '2', active: true},
@@ -16,14 +13,6 @@ const initialState = {
 
 function reducer(state, action) {
     switch (action.type) {
-        case "CHANGE_INPUT" :
-            return {
-                ...state,
-                inputs: {
-                    ...state.inputs,
-                    [action.name]: action.value
-                }
-            }
 
         case "CREATE_USER":
             return {
@@ -34,7 +23,7 @@ function reducer(state, action) {
         case "TOGGLE_USER":
             return {
                 ...state,
-                users: state.users.map( user => user.id === action.id ? {...user, active:!user.active }: {...user})
+                users: state.users.map(user => user.id === action.id ? {...user, active: !user.active} : {...user})
             };
         case "REMOVE_USER":
             return {
@@ -48,34 +37,31 @@ function reducer(state, action) {
 
 function App() {
 
-    const [ state, dispatch ] = useReducer(reducer, initialState);
-    const { users } = state;
-    const { username, email } = state.inputs;
-    const nextId = useRef(4);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [form, onChange, reset] = UseInputs({
+        username: '',
+        email: ''
+    });
+    const {username, email} = form;
 
-    const onChange = useCallback(e => {
-        const { name, value } = e.target;
-        dispatch({
-            type: "CHANGE_INPUT",
-            name: name,
-            value: value
-        });
-    }, [])
+    const {users} = state;
+    const nextId = useRef(4);
 
     const onCreate = useCallback(() => {
         dispatch({
             type: "CREATE_USER",
-            user: { id: nextId.current, username, email }
+            user: {id: nextId.current, username, email}
         })
         nextId.current += 1;
-    }, [username, email]);
+        reset();  //22강. reset 안넣어도 상관없지만 ESLint규칙 상 걍 넣음. ({username,email}에서 생성된 UseInputs산출물은 리렌더되어도 유지되므로?)
+    }, [username, email, reset]);
 
     const onToggle = useCallback((id) => {
-        dispatch({ type:"TOGGLE_USER", id })
-    });
+        dispatch({type: "TOGGLE_USER", id})
+    }, []);
 
     const onRemove = useCallback((id) => {
-        dispatch({ type: "REMOVE_USER", id});
+        dispatch({type: "REMOVE_USER", id});
     }, [])
 
     const count = useMemo(() => countActive(users), [users]);
