@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useReducer, useRef} from 'react';
+import React, {useCallback, useMemo, useReducer, useRef, createContext } from 'react';
 import UserList from "./UserList";
 import CreateUser from "./CreateUser";
 import UseInputs from "./UseInputs";
@@ -34,6 +34,7 @@ function reducer(state, action) {
             throw new Error("Unhandled action");
     }
 }
+export const UserDispatch = createContext(null);
 
 function App() {
 
@@ -56,18 +57,11 @@ function App() {
         reset();  //22강. reset 안넣어도 상관없지만 ESLint규칙 상 걍 넣음. ({username,email}에서 생성된 UseInputs산출물은 리렌더되어도 유지되므로?)
     }, [username, email, reset]);
 
-    const onToggle = useCallback((id) => {
-        dispatch({type: "TOGGLE_USER", id})
-    }, []);
-
-    const onRemove = useCallback((id) => {
-        dispatch({type: "REMOVE_USER", id});
-    }, [])
 
     const count = useMemo(() => countActive(users), [users]);
 
     return (
-        <div>
+        <UserDispatch.Provider value={dispatch}>
             <CreateUser
                 username={username}
                 email={email}
@@ -77,11 +71,9 @@ function App() {
 
             <UserList
                 user={users}
-                onToggle={onToggle}
-                onRemove={onRemove}
             />
             <div>활성 사용자 수 : {count} </div>
-        </div>
+        </UserDispatch.Provider>
     )
 }
 
