@@ -21,7 +21,7 @@ const User = React.memo(function User({user}) {
         }
     }, [])*/
 
-    const {username, email, id, active} =user;
+    const {username, email, id, active} = user;
     const dispatch = useContext(UserDispatch);
 
     return (<>
